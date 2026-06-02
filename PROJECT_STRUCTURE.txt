@@ -1,0 +1,14 @@
+
+src/
+ ├─ app/
+ ├─ components/
+ ├─ features/
+ │   ├─ boards/
+ │   ├─ folders/
+ │   ├─ lessons/
+ │   ├─ materials/
+ │   └─ students/
+ ├─ services/
+ │   ├─ firebase/
+ │   └─ auth/
+ └─ types/

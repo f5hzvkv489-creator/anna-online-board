@@ -1,0 +1,10 @@
+
+{
+  "collections":[
+    "users",
+    "boards",
+    "folders",
+    "lessons",
+    "materials"
+  ]
+}
