@@ -4,42 +4,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anna Board v2</title>
+<title>Anna Board v4</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
 <div class="toolbar">
-    <button onclick="setPen()">✏️ Ручка</button>
-    <button onclick="setEraser()">🧽 Ластик</button>
-    <button onclick="clearBoard()">🗑 Очистить</button>
+  <input type="color" id="colorPicker" value="#c0392b">
+  <label>Перо <input type="range" id="penSize" min="1" max="20" value="3"></label>
+  <label>Ластик <input type="range" id="eraserSize" min="5" max="80" value="24"></label>
+
+  <button data-tool="pen">✏️ Перо</button>
+  <button data-tool="eraser">🧽 Ластик</button>
+  <button data-tool="text">T Текст</button>
+  <button data-tool="line">／ Линия</button>
+  <button data-tool="rect">▭ Прямоугольник</button>
+  <button data-tool="circle">◯ Круг</button>
+
+  <button id="newBoard">Новая доска</button>
+  <button id="clearBtn">Очистить</button>
 </div>
 
-<div class="worksheet-wrapper">
+<div class="board-list">
+  <strong>Доски:</strong>
+  <span id="boardId"></span>
+</div>
 
-    <div class="sheet">
-        <h1>Диагностика ЕГЭ (Профиль)</h1>
-
-        <div class="task">
-            <h2>Задание 1</h2>
-            <p>((5⁴)⁶):(5²²)</p>
-        </div>
-
-        <div class="task">
-            <h2>Задание 2</h2>
-            <p>(√12 − √75) · √12</p>
-        </div>
-
-        <div class="task">
-            <h2>Задание 3</h2>
-            <p>log₂(6,4)+log₂(10)</p>
-        </div>
-
-        <div style="height:900px"></div>
-    </div>
-
-    <canvas id="board"></canvas>
-
+<div class="workspace">
+  <canvas id="board"></canvas>
 </div>
 
 <script src="app.js"></script>

@@ -1,62 +1,87 @@
 
-const canvas = document.getElementById('board');
-const ctx = canvas.getContext('2d');
-const wrapper = document.querySelector('.worksheet-wrapper');
+const canvas=document.getElementById('board');
+const ctx=canvas.getContext('2d');
 
-let tool = 'pen';
-let drawing = false;
-
-function resizeCanvas(){
-    canvas.width = wrapper.scrollWidth;
-    canvas.height = wrapper.scrollHeight;
+function resize(){
+ canvas.width=canvas.parentElement.clientWidth;
+ canvas.height=canvas.parentElement.clientHeight;
 }
+resize(); window.addEventListener('resize',resize);
 
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
+let tool='pen', drawing=false, startX=0, startY=0;
 
-function setPen(){
-    tool = 'pen';
+const boardIdEl=document.getElementById('boardId');
+let boardId=location.hash.replace('#','');
+if(!boardId){
+ boardId=Math.random().toString(36).slice(2,8);
+ location.hash=boardId;
 }
+boardIdEl.textContent=boardId;
 
-function setEraser(){
-    tool = 'eraser';
-}
-
-function clearBoard(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-}
-
-canvas.addEventListener('pointerdown',(e)=>{
-    if(e.pointerType !== 'pen' && e.pointerType !== 'mouse') return;
-
-    drawing = true;
-
-    const rect = canvas.getBoundingClientRect();
-    ctx.beginPath();
-    ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+document.querySelectorAll('[data-tool]').forEach(b=>{
+ b.onclick=()=>tool=b.dataset.tool;
 });
 
-canvas.addEventListener('pointermove',(e)=>{
+document.getElementById('newBoard').onclick=()=>{
+ location.hash=Math.random().toString(36).slice(2,8);
+ location.reload();
+};
 
-    if(!drawing) return;
+document.getElementById('clearBtn').onclick=()=>ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+canvas.addEventListener('pointerdown',e=>{
+ drawing=true;
+ startX=e.offsetX; startY=e.offsetY;
 
-    if(tool === 'pen'){
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.strokeStyle = '#c0392b';
-        ctx.lineWidth = 3;
-    } else {
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.lineWidth = 24;
-    }
-
-    ctx.lineTo(x,y);
-    ctx.stroke();
+ if(tool==='text'){
+   const t=prompt('Введите текст');
+   if(t) ctx.fillText(t,startX,startY);
+   drawing=false;
+   return;
+ }
+ ctx.beginPath();
+ ctx.moveTo(startX,startY);
 });
 
-window.addEventListener('pointerup',()=>{
-    drawing = false;
+canvas.addEventListener('pointermove',e=>{
+ if(!drawing) return;
+
+ if(tool==='pen'){
+   ctx.globalCompositeOperation='source-over';
+   ctx.strokeStyle=document.getElementById('colorPicker').value;
+   ctx.lineWidth=document.getElementById('penSize').value;
+   ctx.lineTo(e.offsetX,e.offsetY);
+   ctx.stroke();
+ }
+
+ if(tool==='eraser'){
+   ctx.globalCompositeOperation='destination-out';
+   ctx.lineWidth=document.getElementById('eraserSize').value;
+   ctx.lineTo(e.offsetX,e.offsetY);
+   ctx.stroke();
+ }
+});
+
+canvas.addEventListener('pointerup',e=>{
+ if(!drawing) return;
+
+ if(tool==='line'){
+   ctx.beginPath();
+   ctx.moveTo(startX,startY);
+   ctx.lineTo(e.offsetX,e.offsetY);
+   ctx.stroke();
+ }
+
+ if(tool==='rect'){
+   ctx.strokeRect(startX,startY,e.offsetX-startX,e.offsetY-startY);
+ }
+
+ if(tool==='circle'){
+   const r=Math.hypot(e.offsetX-startX,e.offsetY-startY);
+   ctx.beginPath();
+   ctx.arc(startX,startY,r,0,Math.PI*2);
+   ctx.stroke();
+ }
+
+ drawing=false;
 });
