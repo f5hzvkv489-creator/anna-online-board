@@ -1,9 +1,9 @@
 
-body{margin:0;background:#f6f7fb;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
-.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:14px 18px;background:white;box-shadow:0 2px 10px rgba(0,0,0,.08);position:sticky;top:0;z-index:10}
-.brand{font-weight:700;color:#5b4bdb;margin-right:10px}
-button{border:none;background:#ecebff;padding:10px 14px;border-radius:12px;cursor:pointer}
-button:hover{background:#ddd9ff}
-.boardinfo{padding:10px 20px;color:#666}
-.workspace{margin:16px;background:white;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.08);height:75vh;overflow:hidden}
-#board{display:block;width:100%;height:100%;touch-action:none}
+body{margin:0;display:flex;height:100vh;font-family:Arial,sans-serif;background:#f6f7fb}
+.sidebar{width:280px;background:white;padding:16px;border-right:1px solid #ddd;overflow:auto}
+.main{flex:1;display:flex;flex-direction:column}
+.topbar{padding:12px;background:white;border-bottom:1px solid #ddd;display:flex;justify-content:space-between}
+textarea{flex:1;border:none;padding:20px;font-size:16px;outline:none}
+button{padding:8px 12px;margin:4px;border:none;border-radius:10px;background:#e8e8ff;cursor:pointer}
+.item{padding:8px;margin:4px 0;background:#f2f2f2;border-radius:8px;cursor:pointer}
+.folder{font-weight:bold}

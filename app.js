@@ -1,59 +1,62 @@
 
-const canvas=document.getElementById('board');
-const ctx=canvas.getContext('2d');
-function resize(){canvas.width=canvas.parentElement.clientWidth;canvas.height=canvas.parentElement.clientHeight;}
-resize();window.addEventListener('resize',resize);
+let data = JSON.parse(localStorage.getItem('annaboard') || '{"folders":[],"boards":{}}');
+let currentBoard = null;
 
-let tool='pen',drawing=false,startX=0,startY=0;
-
-let id=location.hash.replace('#','');
-if(!id){id=Math.random().toString(36).slice(2,8);location.hash=id;}
-document.getElementById('boardId').textContent=id;
-
-document.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>tool=b.dataset.tool);
-
-document.getElementById('clearBtn').onclick=()=>ctx.clearRect(0,0,canvas.width,canvas.height);
-document.getElementById('newBoard').onclick=()=>{location.hash=Math.random().toString(36).slice(2,8);location.reload();};
-
-canvas.addEventListener('pointerdown',e=>{
-drawing=true; startX=e.offsetX; startY=e.offsetY;
-if(tool==='text'){
- const t=prompt('Введите текст');
- if(t){ctx.fillStyle=document.getElementById('colorPicker').value;ctx.font='24px sans-serif';ctx.fillText(t,startX,startY);}
- drawing=false; return;
+function saveData(){
+ localStorage.setItem('annaboard', JSON.stringify(data));
 }
-ctx.beginPath(); ctx.moveTo(startX,startY);
-});
 
-canvas.addEventListener('pointermove',e=>{
-if(!drawing) return;
-if(tool==='pen'){
- ctx.globalCompositeOperation='source-over';
- ctx.strokeStyle=document.getElementById('colorPicker').value;
- ctx.lineWidth=document.getElementById('penSize').value;
- ctx.lineCap='round';
- ctx.lineTo(e.offsetX,e.offsetY); ctx.stroke();
-}
-if(tool==='eraser'){
- ctx.globalCompositeOperation='destination-out';
- ctx.lineWidth=document.getElementById('eraserSize').value;
- ctx.lineCap='round';
- ctx.lineTo(e.offsetX,e.offsetY); ctx.stroke();
-}
-});
+function render(){
+ const tree = document.getElementById('tree');
+ tree.innerHTML='';
 
-canvas.addEventListener('pointerup',e=>{
-if(!drawing) return;
-ctx.globalCompositeOperation='source-over';
-if(tool==='line'){
- ctx.beginPath();ctx.moveTo(startX,startY);ctx.lineTo(e.offsetX,e.offsetY);ctx.stroke();
+ data.folders.forEach(folder=>{
+   const f=document.createElement('div');
+   f.className='item folder';
+   f.textContent='📁 '+folder.name;
+   tree.appendChild(f);
+
+   folder.boards.forEach(id=>{
+      const b=document.createElement('div');
+      b.className='item';
+      b.textContent='📝 '+data.boards[id].name;
+      b.onclick=()=>openBoard(id);
+      tree.appendChild(b);
+   });
+ });
 }
-if(tool==='rect'){
- ctx.strokeRect(startX,startY,e.offsetX-startX,e.offsetY-startY);
+
+function openBoard(id){
+ currentBoard=id;
+ document.getElementById('currentName').textContent=data.boards[id].name;
+ document.getElementById('boardArea').value=data.boards[id].content || '';
 }
-if(tool==='circle'){
- const r=Math.hypot(e.offsetX-startX,e.offsetY-startY);
- ctx.beginPath();ctx.arc(startX,startY,r,0,Math.PI*2);ctx.stroke();
-}
-drawing=false;
-});
+
+document.getElementById('newFolder').onclick=()=>{
+ const name=prompt('Название папки');
+ if(!name) return;
+ data.folders.push({name,boards:[]});
+ saveData(); render();
+};
+
+document.getElementById('newBoard').onclick=()=>{
+ if(data.folders.length===0){
+   alert('Сначала создайте папку');
+   return;
+ }
+ const name=prompt('Название доски');
+ if(!name) return;
+ const id='b_'+Date.now();
+ data.boards[id]={name,content:''};
+ data.folders[0].boards.push(id);
+ saveData(); render();
+};
+
+document.getElementById('saveBtn').onclick=()=>{
+ if(!currentBoard) return;
+ data.boards[currentBoard].content=document.getElementById('boardArea').value;
+ saveData();
+ alert('Сохранено');
+};
+
+render();
