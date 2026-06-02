@@ -1,9 +1,1 @@
-
-body{margin:0;display:flex;height:100vh;font-family:Arial,sans-serif;background:#f6f7fb}
-.sidebar{width:280px;background:white;padding:16px;border-right:1px solid #ddd;overflow:auto}
-.main{flex:1;display:flex;flex-direction:column}
-.topbar{padding:12px;background:white;border-bottom:1px solid #ddd;display:flex;justify-content:space-between}
-textarea{flex:1;border:none;padding:20px;font-size:16px;outline:none}
-button{padding:8px 12px;margin:4px;border:none;border-radius:10px;background:#e8e8ff;cursor:pointer}
-.item{padding:8px;margin:4px 0;background:#f2f2f2;border-radius:8px;cursor:pointer}
-.folder{font-weight:bold}
+body{margin:0;font-family:Arial,sans-serif;display:grid;grid-template-columns:250px 1fr;grid-template-rows:60px 1fr;height:100vh}.topbar{grid-column:1/3;padding:12px;border-bottom:1px solid #ddd}.sidebar{padding:10px;border-right:1px solid #ddd}.workspace{overflow:hidden}#board{width:100%;height:100%;display:block}
